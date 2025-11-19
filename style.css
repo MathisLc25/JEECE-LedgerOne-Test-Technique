@@ -1,0 +1,118 @@
+/* Fichier: frontend/style.css */
+
+/* Intégration de la police Poppins (Doit être lié dans index.html) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* Couleurs et Polices de Marque (Basées sur l'identité LedgerOne) */
+:root {
+    --color-primary: #1E3753; /* Bleu Anthracite foncé (En-têtes) */
+    --color-secondary: #00BFFF; /* Bleu Vif / Cyan (Accents, Boutons) */
+    --color-text: #333;
+    --color-background: #F4F6F8; /* Gris très clair (Arrière-plan du contenu) */
+    --color-success: #28a745; /* Vert pour les succès */
+    --color-income: #1F8A70; /* NOUVEAU: Vert plus soutenu pour les revenus */
+    --color-alert: #dc3545;   /* Rouge pour les alertes */
+    --font-family: 'Poppins', sans-serif;
+}
+
+/* Styles Généraux */
+body {
+    font-family: var(--font-family);
+    color: var(--color-text);
+    background-color: var(--color-background);
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 1200px;
+}
+
+h1 {
+    font-weight: 700;
+    color: var(--color-primary);
+    border-bottom: 3px solid var(--color-secondary);
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: var(--color-primary);
+    margin-top: 30px;
+}
+
+hr {
+    border-top: 1px solid #ccc;
+    margin: 20px 0;
+}
+
+/* --- Styles du Tableau de Bord (KPIs) --- */
+
+#kpi-container > div {
+    flex-grow: 1;
+    padding: 15px 20px;
+    margin: 0 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    background-color: white;
+}
+
+#alert-badge {
+    color: var(--color-primary);
+}
+
+#alert-badge p {
+    font-weight: 600;
+    font-size: 1.2em;
+    color: var(--color-success); /* Vert par défaut */
+}
+
+/* Style spécifique pour les alertes actives */
+#alert-badge p.active-alert {
+    color: var(--color-alert); /* Rouge pour alerte */
+}
+
+/* --- Styles des Tableaux et Boutons --- */
+
+#transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+#transactions-table th, #transactions-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#transactions-table th {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+}
+
+#transactions-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* NOUVEAU: Classe pour afficher les montants de Revenu en vert */
+.transaction-income {
+    color: var(--color-income); 
+    font-weight: 600;
+}
+
+button {
+    background-color: var(--color-secondary);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0099cc;
+}

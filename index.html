@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LedgerOne - Tableau de Bord</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>LedgerOne - Tableau de Bord Financier</h1>
+    
+    <section id="dashboard">
+        <h2>Analyse Mensuelle</h2>
+        
+        <label for="month-selector">Sélectionner un mois:</label>
+        <input type="month" id="month-selector" value="2024-11" onchange="initDashboard()">
+        
+        <div id="kpi-container" style="display: flex; justify-content: space-around; margin-top: 15px; padding: 10px; border: 1px solid #ddd;">
+            <div id="total-spent-kpi"></div>
+            <div id="alert-badge"></div>
+            <div id="info-date-range">Période d'analyse : 18 derniers mois</div>
+        </div>
+    </section>
+
+    <hr>
+    
+    <section id="charts-section" style="display: flex; width: 100%; gap: 20px;">
+        <div style="width: 40%; background-color: #f9f9f9; padding: 15px;">
+            <h3>Répartition des Dépenses</h3>
+            <canvas id="category-chart"></canvas> 
+        </div>
+        
+        <div style="width: 60%; background-color: #f9f9f9; padding: 15px;">
+            <h3>Tendance Mensuelle (Performance)</h3>
+            <canvas id="trend-chart"></canvas>
+        </div>
+    </section>
+
+    <hr>
+
+    <section id="import-view">
+        <h2>Importation de Transactions (CSV)</h2>
+        <input type="file" id="csv-file-input" accept=".csv">
+        <button onclick="handleImport()">Importer Fichier</button>
+        <div id="import-report" style="margin-top: 10px;"></div>
+    </section>
+
+    <hr>
+    
+    <h2>Liste Détaillée des Transactions</h2>
+    <table id="transactions-table" border="1" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Montant</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="5">Chargement de nos transactions...</td></tr>
+        </tbody>
+    </table>
+    
+    <script src="script.js"></script>
+</body>
+</html>
