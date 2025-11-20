@@ -9,7 +9,6 @@ from dateutil import parser as date_parser
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.sql import func 
 
-# --- 1. DÉFINITION DES MODÈLES DE DONNÉES ---
 
 class CategoryBase(SQLModel):
     name: str = Field(index=True, unique=True, min_length=1)
@@ -29,10 +28,6 @@ class Transaction(TransactionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-# Suppression de CategoryCreate car la route utilisera CategoryBase
-# class CategoryCreate(CategoryBase):
-#     pass
-
 class CategoryUpdate(SQLModel):
     name: Optional[str] = None
     color: Optional[str] = None
@@ -46,8 +41,6 @@ class TransactionUpdate(SQLModel):
     description: Optional[str] = None
     amount: Optional[float] = None
     category_id: Optional[int] = None
-
-# --- NOUVEAUX MODÈLES D'INSIGHTS ---
 
 class CategorySummary(BaseModel):
     category_name: str
@@ -78,11 +71,9 @@ class AlertDetail(BaseModel):
     actual_spent: float
     delta: float 
 
-# --- 2. GESTION DE LA BASE DE DONNÉES (SQLite) ---
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
-
 engine = create_engine(sqlite_url, echo=True) 
 
 def create_db_and_tables():
@@ -94,7 +85,6 @@ def get_session():
 
 DBSession = Annotated[Session, Depends(get_session)]
 
-# --- 3. DÉFINITION DE L'APPLICATION FASTAPI ---
 
 app = FastAPI(
     title="LedgerOne API",
@@ -102,10 +92,7 @@ app = FastAPI(
     description="API REST pour la gestion financière LedgerOne.",
 )
 
-# Configuration du middleware CORS
-origins = [
-    "*", 
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -119,7 +106,6 @@ app.add_middleware(
 def on_startup():
     create_db_and_tables()
 
-# --- 4. ROUTES POUR LES CATÉGORIES (CRUD COMPLET) ---
 
 @app.get("/")
 def read_root():
@@ -127,8 +113,7 @@ def read_root():
 
 
 @app.post("/api/categories/", response_model=Category, status_code=201)
-def create_category(category: CategoryBase, db: DBSession): # CORRIGÉ : UTILISE CategoryBase
-    
+def create_category(category: CategoryBase, db: DBSession):
     existing_category = db.exec(
         select(Category).where(Category.name == category.name)
     ).first()
@@ -181,11 +166,8 @@ def delete_category(category_id: int, db: DBSession):
     return 
 
 
-# --- 5. ROUTES POUR LES TRANSACTIONS (CRUD COMPLET) ---
-
 @app.post("/api/transactions/", response_model=Transaction, status_code=201)
 def create_transaction(transaction: TransactionCreate, db: DBSession):
-    
     if transaction.category_id is not None:
         existing_category = db.get(Category, transaction.category_id)
         if not existing_category:
@@ -209,7 +191,6 @@ def read_transactions(
     limit: int = 100,
     offset: int = 0
 ):
-    
     statement = select(Transaction)
 
     if from_date:
@@ -257,13 +238,9 @@ def delete_transaction(transaction_id: int, db: DBSession):
     db.commit()
     return
 
-# --- 6. ROUTE D'IMPORT CSV ---
 
 @app.post("/api/import/csv")
-async def import_csv(
-    db: DBSession, 
-    file: UploadFile = File(...) 
-):
+async def import_csv(db: DBSession, file: UploadFile = File(...)):
     inserted = 0
     skipped = 0
     errors = []
@@ -320,21 +297,14 @@ async def import_csv(
         
     return {"inserted": inserted, "skipped": skipped, "errors": errors}
 
-# --- FONCTION DE CALCUL POUR LA MOYENNE GLISSANTE ---
 
 def calculate_moving_average(monthly_data: List[MonthlyTrend], window: int = 3):
-    """Calcule la moyenne glissante (Simple Moving Average - SMA) sur une fenêtre de 3 mois."""
-    
     data_points = [m.total_spent for m in monthly_data]
     
     for i in range(len(data_points)):
-        # Définir la fenêtre de 3 mois: (i), (i-1), (i-2)
         start_index = max(0, i - window + 1)
-        
-        # Récupérer les montants dans la fenêtre
         window_slice = data_points[start_index : i + 1]
         
-        # Calculer la moyenne uniquement si la fenêtre est pleine (3 mois)
         if len(window_slice) == window:
             avg = sum(window_slice) / window
             monthly_data[i].moving_average_3m = avg
@@ -342,21 +312,13 @@ def calculate_moving_average(monthly_data: List[MonthlyTrend], window: int = 3):
     return monthly_data
 
 
-# --- 7. ROUTES POUR LES INSIGHTS (Phase 4) ---
-
 @app.get("/api/insights/summary", response_model=MonthlySummary)
 def get_monthly_summary(month: str, db: DBSession):
-    """
-    Calcule le total dépensé et le total par catégorie pour le mois spécifié (YYYY-MM).
-    """
-    
-    # 1. Définir la période et valider le format YYYY-MM
     try:
         date.fromisoformat(f"{month}-01") 
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM.")
 
-    # 2. Requête d'agrégation : Somme des montants par catégorie
     stats = db.exec(
         select(
             Category.name,
@@ -368,7 +330,6 @@ def get_monthly_summary(month: str, db: DBSession):
         .group_by(Category.name, Category.monthly_budget)
     ).all()
 
-    # 3. Formater les résultats
     summary_categories = []
     total_spent_all = 0.0
     global_alerts_count = 0
@@ -378,8 +339,7 @@ def get_monthly_summary(month: str, db: DBSession):
         actual_spent = spent 
         total_spent_all += actual_spent 
         
-        # Calculer le budget restant
-        budget_remaining = (budget or 0) - spent # Correction du budget restant (budget - spent)
+        budget_remaining = (budget or 0) - spent
         
         if budget is not None and budget_remaining < 0:
              global_alerts_count += 1
@@ -391,7 +351,6 @@ def get_monthly_summary(month: str, db: DBSession):
             budget_remaining=budget_remaining
         ))
 
-    # 4. Renvoyer le résumé mensuel
     return MonthlySummary(
         month=month,
         total_spent=total_spent_all,
@@ -401,13 +360,7 @@ def get_monthly_summary(month: str, db: DBSession):
 
 
 @app.get("/api/insights/trend", response_model=TrendResponse)
-def get_monthly_trend(
-    db: DBSession,
-    from_date: date,
-    to_date: date
-):
-    
-    # 1. Requête SQL d'agrégation : Somme par YYYY-MM sur la période
+def get_monthly_trend(db: DBSession, from_date: date, to_date: date):
     stats = db.exec(
         select(
             func.strftime('%Y-%m', Transaction.date).label("month"),
@@ -419,7 +372,6 @@ def get_monthly_trend(
         .order_by(func.strftime('%Y-%m', Transaction.date)) 
     ).all()
 
-    # 2. Convertir les résultats SQL en objets Pydantic (MonthlyTrend)
     monthly_data = []
     for month, spent in stats:
         monthly_data.append(MonthlyTrend(
@@ -427,10 +379,8 @@ def get_monthly_trend(
             total_spent=spent if spent is not None else 0.0
         ))
         
-    # 3. Calculer la Moyenne Glissante
     monthly_data = calculate_moving_average(monthly_data, window=3)
 
-    # 4. Renvoyer la réponse
     return TrendResponse(
         start_date=from_date,
         end_date=to_date,
@@ -439,13 +389,9 @@ def get_monthly_trend(
 
 @app.get("/api/alerts", response_model=List[AlertDetail])
 def get_alerts(month: str, db: DBSession):
-    
-    # 1. Obtenir le résumé agrégé pour le mois (même logique que get_monthly_summary)
     try:
-        # 1.1. Définir la période et valider le format YYYY-MM
         date.fromisoformat(f"{month}-01") 
         
-        # 1.2. Requête d'agrégation : Somme des montants par catégorie
         stats = db.exec(
             select(
                 Category.name,
@@ -462,15 +408,10 @@ def get_alerts(month: str, db: DBSession):
         
     alerts = []
     
-    # 2. Parcourir les résultats et générer les alertes
     for name, budget, spent in stats:
-        
         spent = spent if spent is not None else 0.0 
         
-        # On ne vérifie que les catégories avec un budget défini (> 0)
         if budget is not None and budget > 0:
-            
-            # Si la dépense réelle (spent) est supérieure au budget
             if spent > budget: 
                 alerts.append(AlertDetail(
                     scope="category",
