@@ -3,31 +3,24 @@ from faker import Faker
 from datetime import date, timedelta
 import random
 
-# --- CONFIGURATION ---
-# L'API est configurée pour le port 8001
 API_URL = "http://127.0.0.1:8001/api/transactions/" 
 NUM_TRANSACTIONS = 1500  
-
-# IDs des catégories que vous avez dans votre BDD (Vérifiés : 2, 3, 4, 5, 6)
 CATEGORY_IDS = [1, 2, 3, 4] 
 
 fake = Faker()
 
 def generate_random_date(start_date, end_date):
-    """Génère une date aléatoire sur la période définie."""
     return start_date + timedelta(days=random.randint(0, (end_date - start_date).days))
 
 def seed_data():
     print(f"--- Début de l'insertion de {NUM_TRANSACTIONS} transactions ---")
 
-    # Période: Les 18 derniers mois
     end_date = date.today()
     start_date = end_date - timedelta(days=18 * 30) 
 
     for i in range(NUM_TRANSACTIONS):
         amount = round(random.uniform(5.0, 500.0), 2)
         
-        # 20% de chances d'être un revenu (montant négatif)
         if random.random() < 0.2:
             amount *= -1 
         
@@ -39,7 +32,6 @@ def seed_data():
         }
 
         try:
-            # Envoie la requête POST à votre API
             response = requests.post(API_URL, json=transaction_data)
             response.raise_for_status() 
 

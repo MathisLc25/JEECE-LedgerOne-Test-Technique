@@ -1,21 +1,16 @@
-/* Fichier: frontend/style.css */
-
-/* Intégration de la police Poppins (Doit être lié dans index.html) */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-/* Couleurs et Polices de Marque (Basées sur l'identité LedgerOne) */
 :root {
-    --color-primary: #1E3753; /* Bleu Anthracite foncé (En-têtes) */
-    --color-secondary: #00BFFF; /* Bleu Vif / Cyan (Accents, Boutons) */
+    --color-primary: #1E3753;
+    --color-secondary: #00BFFF;
     --color-text: #333;
-    --color-background: #F4F6F8; /* Gris très clair (Arrière-plan du contenu) */
-    --color-success: #28a745; /* Vert pour les succès */
-    --color-income: #1F8A70; /* NOUVEAU: Vert plus soutenu pour les revenus */
-    --color-alert: #dc3545;   /* Rouge pour les alertes */
+    --color-background: #F4F6F8;
+    --color-success: #28a745;
+    --color-income: #1F8A70;
+    --color-alert: #dc3545;
     --font-family: 'Poppins', sans-serif;
 }
 
-/* Styles Généraux */
 body {
     font-family: var(--font-family);
     color: var(--color-text);
@@ -42,8 +37,6 @@ hr {
     margin: 20px 0;
 }
 
-/* --- Styles du Tableau de Bord (KPIs) --- */
-
 #kpi-container > div {
     flex-grow: 1;
     padding: 15px 20px;
@@ -55,22 +48,21 @@ hr {
     background-color: white;
 }
 
-#alert-badge {
-    color: var(--color-primary);
-}
-
 #alert-badge p {
     font-weight: 600;
     font-size: 1.2em;
-    color: var(--color-success); /* Vert par défaut */
+    color: var(--color-success);
 }
 
-/* Style spécifique pour les alertes actives */
 #alert-badge p.active-alert {
-    color: var(--color-alert); /* Rouge pour alerte */
+    color: var(--color-alert);
 }
 
-/* --- Styles des Tableaux et Boutons --- */
+#charts-section > div {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
 
 #transactions-table {
     width: 100%;
@@ -96,7 +88,6 @@ hr {
     background-color: #f5f5f5;
 }
 
-/* NOUVEAU: Classe pour afficher les montants de Revenu en vert */
 .transaction-income {
     color: var(--color-income); 
     font-weight: 600;

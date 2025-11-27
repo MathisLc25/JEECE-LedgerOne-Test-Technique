@@ -1,10 +1,7 @@
-// Fichier: script.js (Version Stable)
-
 const API_BASE_URL = 'http://127.0.0.1:8001'; 
 let categoriesMap = {}; 
 let charts = {}; 
 
-// --- 1. FONCTIONS DE CHARGEMENT ET D'AFFICHAGE DU DASHBOARD ---
 
 async function fetchSummaryAndAlerts(month, startDate, endDate) { 
     try { 
@@ -49,8 +46,6 @@ async function fetchSummaryAndAlerts(month, startDate, endDate) {
     } 
 } 
 
-
-// --- 2. FONCTIONS DE GESTION DE DONNÉES (CRUD & Import) --- 
 
 async function fetchAndDisplayTransactions() { 
     try { 
@@ -144,8 +139,6 @@ async function handleImport() {
 } 
 
 
-// --- 3. FONCTIONS DE DESSIN DE GRAPHIQUES --- 
-
 function drawCategoryChart(categories) { 
     const canvas = document.getElementById('category-chart'); 
     if (!canvas) return; 
@@ -205,22 +198,18 @@ function drawTrendChart(trends) {
 
 } 
 
-// --- INITIALISATION GLOBALE DE L'APPLICATION --- 
 
 function initDashboard() { 
-    // Lire le mois sélectionné par l'utilisateur (par défaut 2024-11) 
     const monthSelector = document.getElementById('month-selector'); 
     const currentMonth = monthSelector ? monthSelector.value : '2024-11'; 
     
-    // Période de tendance pour la démo 
     const startDate = '2023-06-01'; 
     const endDate = '2024-12-31'; 
 
-    // Lancement de tous les appels API 
     fetchSummaryAndAlerts(currentMonth, startDate, endDate); 
 } 
 
-// CORRECTION CRITIQUE : Lance la fonction seulement après que tout le HTML est chargé 
+
 document.addEventListener('DOMContentLoaded', (event) => { 
     initDashboard(); 
 });
