@@ -1,14 +1,13 @@
-# 💰 LedgerOne - Financial Dashboard & Data Analysis
+  LedgerOne - Financial Dashboard & Data Analysis
 
-> **Statut :** Preuve de Concept (POC) réalisée dans le cadre d'un test technique d'architecture logicielle.
+> **Statut : Concept (POC) réalisée dans le cadre d'un test technique d'architecture logicielle.
 
 Ce projet est un outil de gestion financière permettant de traiter, stocker et visualiser des flux de données bancaires. Il démontre ma capacité à créer une architecture complète, du traitement de données (Backend) à la visualisation interactive (Frontend).
 
-## 📸 Aperçu du Dashboard
-![Interface LedgerOne](Assets/dashboard.png)
-*Visualisation des tendances financières et module d'importation de données.*
+Visualiton du dashboard dans la partie Assets.
 
-## 🚀 Fonctionnalités Clés
+
+° Fonctionnalités Clés
 - **Data Visualization** : Dashboard interactif affichant l'évolution des dépenses et des revenus via Charts.js.
 - **Traitement de Données** : Système d'importation et de parsing de fichiers CSV pour automatiser l'alimentation de la base de données.
 - **Architecture API REST** : Backend performant utilisant FastAPI pour une communication fluide entre les données et l'interface.
