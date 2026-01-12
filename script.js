@@ -178,8 +178,8 @@ function drawTrendChart(trends) {
             datasets: [{ 
                 label: 'Dépenses Totales Mensuelles', 
                 data: trends.map(t => t.total_spent), 
-                borderColor: 'rgba(54, 162, 235, 1)', 
-                backgroundColor: 'rgba(54, 162, 235, 0.2)', 
+                borderColor: 'rgba(54, 235, 108, 1)', 
+                backgroundColor: 'rgba(72, 235, 54, 0.2)', 
                 fill: false, 
                 tension: 0.2 
             }, 
