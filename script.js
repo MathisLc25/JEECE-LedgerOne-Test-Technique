@@ -178,7 +178,7 @@ function drawTrendChart(trends) {
             datasets: [{ 
                 label: 'Dépenses Totales Mensuelles', 
                 data: trends.map(t => t.total_spent), 
-                borderColor: 'rgba(54, 235, 108, 1)', 
+                borderColor: 'rgb(54, 60, 235)', 
                 backgroundColor: 'rgba(72, 235, 54, 0.2)', 
                 fill: false, 
                 tension: 0.2 
@@ -203,8 +203,8 @@ function initDashboard() {
     const monthSelector = document.getElementById('month-selector'); 
     const currentMonth = monthSelector ? monthSelector.value : '2024-11'; 
     
-    const startDate = '2023-06-01'; 
-    const endDate = '2024-12-31'; 
+    const startDate = '2024-06-01'; 
+    const endDate = '2026-01-15'; 
 
     fetchSummaryAndAlerts(currentMonth, startDate, endDate); 
 } 
@@ -213,3 +213,108 @@ function initDashboard() {
 document.addEventListener('DOMContentLoaded', (event) => { 
     initDashboard(); 
 });
+// Ajoute cette fonction après fetchSummaryAndAlerts
+async function fetchAndDisplayOverruns(month) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/alerts?month=${month}`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des alertes.');
+        
+        const alerts = await response.json();
+        
+        // Trier par montant de dépassement décroissant et prendre les 3 premiers
+        const top3 = alerts
+            .sort((a, b) => b.overrun_amount - a.overrun_amount)
+            .slice(0, 3);
+        
+        displayOverruns(top3);
+        
+    } catch (error) {
+        console.error("Erreur de chargement des dépassements:", error);
+        document.getElementById('overruns-container').innerHTML = 
+            '<p style="color: var(--color-alert);">Erreur de chargement des dépassements.</p>';
+    }
+}
+
+function displayOverruns(overruns) {
+    const container = document.getElementById('overruns-container');
+    
+    if (overruns.length === 0) {
+        container.innerHTML = `
+            <div class="no-overruns">
+                <p>✓ Aucun dépassement de budget</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = overruns.map((overrun, index) => {
+        const percentage = ((overrun.overrun_amount / overrun.budget_limit) * 100).toFixed(1);
+        const progressPercentage = Math.min(((overrun.spent_amount / overrun.budget_limit) * 100), 200);
+        
+        return `
+            <div class="overrun-card">
+                <div class="overrun-header">
+                    <div class="overrun-rank">#${index + 1}</div>
+                    <div class="overrun-category">
+                        <h3>${overrun.category_name}</h3>
+                        <p>Budget: ${overrun.budget_limit.toFixed(2)}€ | Dépensé: ${overrun.spent_amount.toFixed(2)}€</p>
+                    </div>
+                </div>
+                <div class="overrun-amount">
+                    <span class="overrun-value">+${overrun.overrun_amount.toFixed(2)}€</span>
+                    <span class="overrun-percent">+${percentage}%</span>
+                </div>
+                <div class="overrun-progress">
+                    <div class="overrun-progress-bar" style="width: ${progressPercentage}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Modifie la fonction fetchSummaryAndAlerts pour inclure l'appel aux dépassements
+async function fetchSummaryAndAlerts(month, startDate, endDate) { 
+    try { 
+        const [summaryRes, trendRes, alertRes, categoryRes] = await Promise.all([ 
+            fetch(`${API_BASE_URL}/api/insights/summary?month=${month}`), 
+            fetch(`${API_BASE_URL}/api/insights/trend?from_date=${startDate}&to_date=${endDate}`), 
+            fetch(`${API_BASE_URL}/api/alerts?month=${month}`), 
+            fetch(`${API_BASE_URL}/api/categories/`) 
+        ]); 
+        
+        if (!summaryRes.ok || !trendRes.ok || !alertRes.ok || !categoryRes.ok) { 
+            throw new Error('Erreur lors du chargement des Insights. Le serveur API est-il actif sur 8001 ?'); 
+        } 
+
+        const summary = await summaryRes.json(); 
+        const trends = await trendRes.json(); 
+        const alerts = await alertRes.json(); 
+        const categories = await categoryRes.json(); 
+        
+        categoriesMap = categories.reduce((map, cat) => { 
+            map[cat.id] = cat.name; 
+            return map; 
+        }, {}); 
+
+        document.getElementById('total-spent-kpi').innerHTML =  
+            `<h3>Total Net (${month})</h3><p>${summary.total_spent.toFixed(2)} €</p>`; 
+        
+        const alertBadgeElement = document.getElementById('alert-badge'); 
+        alertBadgeElement.innerHTML =  
+            `<h3>Alertes Budget</h3><p class="${alerts.length > 0 ? 'active-alert' : ''}"> 
+            ${alerts.length} Dépassement(s) 
+            </p>`; 
+
+        drawCategoryChart(summary.categories); 
+        drawTrendChart(trends.trends); 
+        
+        // AJOUTE CETTE LIGNE
+        fetchAndDisplayOverruns(month);
+        
+        fetchAndDisplayTransactions(); 
+
+    } catch (error) { 
+        console.error("Erreur critique d'initialisation:", error); 
+        document.getElementById('kpi-container').innerHTML = `<p style="color:red;">ERREUR FATALE: Connexion API échouée. Veuillez vérifier que le serveur tourne sur le port 8001.</p>`; 
+    } 
+}
