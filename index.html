@@ -23,7 +23,7 @@
         <div id="kpi-container" style="display: flex; justify-content: space-around; margin-top: 15px; padding: 10px; border: 1px solid #ddd;">
             <div id="total-spent-kpi"></div>
             <div id="alert-badge"></div>
-            <div id="info-date-range">Période d'analyse : 18 derniers mois</div>
+            <div id="info-date-range">Période d'analyse :   20 derniers mois</div>
         </div>
     </section>
 
@@ -42,14 +42,18 @@
     </section>
 
     <hr>
-
+<div id="overruns-container"></div>
     <section id="import-view">
         <h2>Importation de Transactions (CSV)</h2>
         <input type="file" id="csv-file-input" accept=".csv">
         <button onclick="handleImport()">Importer Fichier</button>
         <div id="import-report" style="margin-top: 10px;"></div>
     </section>
-
+<section id="alerts-section">
+    <h2>Détails des Dépassements</h2>
+    <div id="overruns-container">
+        </div>
+</section>
     <hr>
     
     <h2>Liste Détaillée des Transactions</h2>

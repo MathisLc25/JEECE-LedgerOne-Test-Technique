@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Arial', sans-serif; color: #333; margin: 40px; }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #28a745; pb: 10px; }
+        .company-info { font-size: 14px; }
+        .invoice-title { color: #28a745; font-size: 28px; font-weight: bold; }
+        .details { margin-top: 30px; display: flex; justify-content: space-between; }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        th { background-color: #f8f9fa; border-bottom: 2px solid #dee2e6; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #dee2e6; }
+        .total { font-size: 20px; font-weight: bold; text-align: right; margin-top: 20px; color: #28a745; }
+        .footer { margin-top: 50px; font-size: 12px; text-align: center; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-info">
+            <strong>- Auchan Bordeaux Lac</strong><br>
+            Avenue des 40 Journaux<br>
+            33300 Bordeaux<br>
+            SIRET : 123 456 789 00012
+        </div>
+        <div class="invoice-title">FACTURE</div>
+    </div>
+
+    <div class="details">
+        <div>
+            <strong>Facturé à :</strong><br>
+            Vous <br>
+            
+        </div>
+        <div style="text-align: right;">
+            <strong>N° Facture :</strong> INV-2024-11-05-01<br>
+            <strong>Date :</strong> 05/11/2024<br>
+            <strong>Catégorie :</strong> Alimentation (ID: 4)
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Prix Unitaire TTC</th>
+                <th>Total TTC</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Panier de fruits frais (Bio)</td>
+                <td>1</td>
+                <td>12.50 €</td>
+                <td>12.50 €</td>
+            </tr>
+            <tr>
+                <td>Pack d'eau minérale (6x1.5L)</td>
+                <td>2</td>
+                <td>4.40 €</td>
+                <td>8.80 €</td>
+            </tr>
+            <tr>
+                <td>Produits d'épicerie variés</td>
+                <td>1</td>
+                <td>21.00 €</td>
+                <td>21.00 €</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="total">TOTAL À PAYER : 42.30 €</div>
+
+    <div class="footer">
+        <em>Cette facture est un document de test pour le POC .<br>
+        Réalisé par l'équipe : Mathis, Oscar et Landry.</em>
+    </div>
+</body>
+</html>
